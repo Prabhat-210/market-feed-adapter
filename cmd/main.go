@@ -9,14 +9,18 @@ import (
 )
 
 func main() {
-	_, err := bootstrap.Initialize()
+	app, err := bootstrap.Initialize()
 	if err != nil {
 		os.Exit(1)
 	}
-	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	ctx, cancel := signal.NotifyContext(
+		context.Background(),
+		syscall.SIGINT,
+		syscall.SIGTERM)
 	defer cancel()
 
-	<-ctx.Done()
-
+	if err := app.Run(ctx); err != nil {
+		os.Exit(1)
+	}
 	// app.Close()//close pipeline
 }
