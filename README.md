@@ -74,24 +74,16 @@ If still failing — saves to Dead Letter Queue so nothing is lost silently.
 
 ---
 
-## Why hash routing matters
+## hash routing 
 
 ```
-without hash routing
-    RELIANCE tick 1  →  decoder 1  →  interpreter 4
-    RELIANCE tick 2  →  decoder 2  →  interpreter 4
-    
-    two decoders feeding same interpreter
-    tick 2 might arrive before tick 1
-    ordering broken ❌
-
 with hash routing
     RELIANCE tick 1  →  decoder 1  →  interpreter 4
     RELIANCE tick 2  →  decoder 2  →  interpreter 4
     
     same decoder always handles RELIANCE
     same interpreter always handles RELIANCE
-    ordering guaranteed ✅
+    ordering guaranteed 
 ```
 
 ---
@@ -107,95 +99,3 @@ with hash routing
 | Interpreter full | Drop tick, log warning |
 
 ---
-
-## Folder Structure
-
-```
-market-feed-adapter/
-├── cmd/
-│   ├── main.go                  # production entry point
-│   └── mockserver/
-│       └── main.go              # development mock server
-│
-├── internal/
-│   ├── feed/
-│   │   ├── connection.go        # struct + constructor
-│   │   └── connect.go           # stage 0: connect, reconnect, read
-│   │
-│   ├── pipeline/
-│   │   ├── pipeline.go          # wires all stages
-│   │   ├── ingestor.go          # stage 1: round-robin to decoders
-│   │   ├── decoder.go           # stage 2: decode + hash route
-│   │   ├── interpreter.go       # stage 3: validate + enrich
-│   │   └── egress.go            # stage 4: kafka publish + retry + dlq
-│   │
-│   ├── model/
-│   │   ├── tick.go              # RawTick, DecodedTick
-│   │   └── market_tick.go       # MarketTick (published to Kafka)
-│   │
-│   ├── publisher/
-│   │   └── kafka.go             # kafka producer wrapper
-│   │
-│   ├── platform/
-│   │   ├── config/
-│   │   │   └── config.go
-│   │   └── logger/
-│   │       └── logger.go
-│   │
-│   └── bootstrap/
-│       └── bootstrap.go
-│
-├── mock/
-│   ├── generator.go             # generates realistic Upstox V3 ticks
-│   └── server.go                # mock WebSocket server
-│
-├── .env
-├── go.mod
-└── go.sum
-```
-
----
-
-## Configuration
-
-```env
-# service
-SERVICE_NAME=market-feed-adapter
-ENVIRONMENT=dev
-LOG_LEVEL=debug
-
-# feed
-AUTHORIZE_URL=https://api.upstox.com/v3/feed/market-data-feed/authorize
-UPSTOX_ACCESS_TOKEN=your_token_here
-INSTRUMENTS=NSE_INDEX|Nifty 50,NSE_INDEX|Nifty Bank
-RECONNECT_MAX_MS=30000
-BUFFER_SIZE=10000
-
-# pipeline
-DECODER_COUNT=10
-INTERPRETER_COUNT=20
-
-# mock
-MOCK_ADDR=localhost:8765
-MOCK_INTERVAL_MS=500
-
-# kafka
-KAFKA_BROKERS=localhost:9092
-KAFKA_TOPIC=upstox.market.tick
-KAFKA_DLQ_TOPIC=upstox.market.tick.dlq
-```
-
----
-
-## Running
-
-```bash
-# development — run mock server first
-go run cmd/mockserver/main.go
-
-# then run feed adapter (point AUTHORIZE_URL to mock in .env)
-go run cmd/main.go
-
-# production
-go run cmd/main.go
-```
