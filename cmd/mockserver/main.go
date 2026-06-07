@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"feed-adapter/internal/config"
+	"feed-adapter/internal/platform/config"
 	"feed-adapter/mock"
 
 	"github.com/rs/zerolog"

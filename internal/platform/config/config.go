@@ -13,11 +13,20 @@ type FeedConfig struct {
 	ConnectionChanSize int      `env:"CONNECTION_CHAN_SIZE"   envDefault:"1000"`
 	AuthorizeURL       string   `env:"AUTHORIZE_URL" envDefault:"http://localhost:8765/v3/feed/market-data-feed/authorize"`
 }
+
 type Mock struct {
 	MockMode       bool   `env:"MOCK_MODE"         envDefault:"true"`
 	MockAddr       string `env:"MOCK_ADDR"         envDefault:"localhost:8765"`
 	MockIntervalMs int    `env:"MOCK_INTERVAL_MS"  envDefault:"500"`
 }
+
+type Pipeline struct {
+	DecoderCount   int `env:"DECODER_COUNT"   envDefault:"10"`
+	InterpreterCount int `env:"INTERPRETER_COUNT" envDefault:"20"`
+	BufferSize       int `env:"BUFFER_SIZE"       envDefault:"2"`
+	BatchMs          int `env:"BATCH_MS"          envDefault:"5"`
+}
+
 type Config struct {
 	// service
 	ServiceName string `env:"SERVICE_NAME" envDefault:"market-data-service"`
@@ -25,13 +34,7 @@ type Config struct {
 	LogLevel    string `env:"LOG_LEVEL"    envDefault:"info"`
 	Mock
 	FeedConfig
-	// pipeline
-	CollectorCount   int `env:"COLLECTOR_COUNT"   envDefault:"10"`
-	InterpreterCount int `env:"INTERPRETER_COUNT" envDefault:"20"`
-	BufferSize       int `env:"BUFFER_SIZE"       envDefault:"10000"`
-	BatchMs          int `env:"BATCH_MS"          envDefault:"5"`
-
-	// kafka
+	Pipeline
 	KafkaBrokers       string `env:"KAFKA_BROKERS"`
 	KafkaTopic         string `env:"KAFKA_TOPIC"         envDefault:"price.updated"`
 	KafkaDLQTopic      string `env:"KAFKA_DLQ_TOPIC"     envDefault:"price.dlq"`

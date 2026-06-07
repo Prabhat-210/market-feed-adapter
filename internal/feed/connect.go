@@ -141,15 +141,12 @@ func (c *Connection) readLoop(ctx context.Context, conn *websocket.Conn) error {
 	for {
 		_, data, err := conn.ReadMessage()
 		if err != nil {
-			// Application shutting down.
 			if ctx.Err() != nil {
 				return nil
 			}
-			// Connection lost.
 			return fmt.Errorf("read failed: %w", err)
 		}
-		// Stage 0 only receives bytes.
-		// Decoding and validation happen later in pipeline stages.
+
 		tick := &model.RawTick{
 			Data:       data,
 			ReceivedAt: time.Now(),
@@ -157,6 +154,7 @@ func (c *Connection) readLoop(ctx context.Context, conn *websocket.Conn) error {
 		select {
 		// here we Push raw message to pipeline.
 		case c.out <- tick:
+			c.log.Debug().RawJSON("tick Data", tick.Data).Msg("updates")
 		default:
 			// Drop incoming tick instead of blocking websocket reads.
 			c.log.Warn().Msg("feed output channel full, dropping incoming tick")

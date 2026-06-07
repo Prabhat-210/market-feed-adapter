@@ -1,8 +1,8 @@
 package feed
 
 import (
-	"feed-adapter/internal/config"
 	"feed-adapter/internal/model"
+	"feed-adapter/internal/platform/config"
 	"net/http"
 	"time"
 
