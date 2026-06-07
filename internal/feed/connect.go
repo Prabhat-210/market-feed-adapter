@@ -11,10 +11,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const (
-	authorizeURL = "https://api.upstox.com/v3/feed/market-data-feed/authorize"
-)
-
 type subscribeMsg struct {
 	Guid   string        `json:"guid"`
 	Method string        `json:"method"`
@@ -89,7 +85,7 @@ func (c *Connection) connect(ctx context.Context) error {
 
 // fetches websocket URL from upstocks
 func (c *Connection) fetchAuthorizedURL(ctx context.Context) (string, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, authorizeURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.authorizeURL, nil)
 	if err != nil {
 		return "", err
 	}

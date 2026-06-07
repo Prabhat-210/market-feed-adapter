@@ -11,6 +11,15 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/cmd"
+        },
+                {
+            "name": "mock_upstox",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/mockserver"
         }
+
+        
     ]
 }

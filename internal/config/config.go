@@ -11,13 +11,19 @@ type FeedConfig struct {
 	Instruments        []string `env:"INSTRUMENTS" envSeparator:"," envDefault:"NSE_INDEX|Nifty 50,NSE_INDEX|Nifty Bank"`
 	Mode               string   `env:"MODE" envDefault:"full"`
 	ConnectionChanSize int      `env:"CONNECTION_CHAN_SIZE"   envDefault:"1000"`
+	AuthorizeURL       string   `env:"AUTHORIZE_URL" envDefault:"http://localhost:8765/v3/feed/market-data-feed/authorize"`
+}
+type Mock struct {
+	MockMode       bool   `env:"MOCK_MODE"         envDefault:"true"`
+	MockAddr       string `env:"MOCK_ADDR"         envDefault:"localhost:8765"`
+	MockIntervalMs int    `env:"MOCK_INTERVAL_MS"  envDefault:"500"`
 }
 type Config struct {
 	// service
 	ServiceName string `env:"SERVICE_NAME" envDefault:"market-data-service"`
 	Environment string `env:"ENVIRONMENT"  envDefault:"dev"`
 	LogLevel    string `env:"LOG_LEVEL"    envDefault:"info"`
-
+	Mock
 	FeedConfig
 	// pipeline
 	CollectorCount   int `env:"COLLECTOR_COUNT"   envDefault:"10"`

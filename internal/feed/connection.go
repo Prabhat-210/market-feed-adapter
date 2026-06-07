@@ -10,6 +10,7 @@ import (
 )
 
 type Connection struct {
+	authorizeURL   string
 	accessToken    string
 	instruments    []string
 	mode           string
@@ -26,6 +27,7 @@ func NewConnection(cfg config.FeedConfig,
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
+		authorizeURL:   cfg.AuthorizeURL,
 		accessToken:    cfg.AccessToken,
 		instruments:    cfg.Instruments,
 		mode:           cfg.Mode,

@@ -1,26 +1,26 @@
+// model/tick.go
+
 package model
 
 import "time"
 
 // raw protobuf bytes from feed
 type RawTick struct {
-	Data      []byte
+	Data       []byte
 	ReceivedAt time.Time
 }
 
-type DecodeBytes struct {
-	InstrumentKey string    // e.g. "NSE_EQ|INE020B01018"
-	Symbol        string    // e.g. "RELIANCE"
-	Exchnage      string    // e.g. "NSE_EQ"
-	LTP           string    // last traded price
-	LTQ           int64     // last traded quantity
-	LTT           time.Time // last traded time
-	ClosePrice    float64   // previous close
-	ATP           float64   //Avg traded price
-	Volume        float64   // /day volume
-	OpenIntrest   float64
-	TBQ           float64 // total buy quantity
-	TSQ           float64 // total sell quantity
-	Timestamp     time.Time
-	Sequence      int64 // for duplicate detection
+// after protobuf decode — matches Upstox V3 fullFeed structure
+type DecodedTick struct {
+	InstrumentKey string    // e.g. "NSE_FO|45450"
+	LTP           float64   // ltp — last traded price
+	LTT           int64     // ltt — last traded time (epoch ms)
+	LTQ           int64     // ltq — last traded quantity
+	CP            float64   // cp — close price (previous day)
+	ATP           float64   // atp — average traded price
+	VTT           int64     // vtt — volume traded today
+	OI            float64   // oi — open interest
+	TBQ           int64     // tbq — total buy quantity
+	TSQ           int64     // tsq — total sell quantity
+	ReceivedAt    time.Time // when we received the raw tick
 }
